@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import { IBlogPost } from "./types";
 import { fetchBlogApi } from "./services";
 
+import BlogCard from "./BlogCard";
 import "./App.scss";
 
 function App() {
   const [data, setData] = useState<IBlogPost[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -17,8 +19,28 @@ function App() {
       })
       .catch((err) => {
         console.log(err);
+        setError("Failed to fetch data. Please try again.");
       });
   }, []);
+
+  /*
+  alternative - instead of using useState and useEffect there could be useQuery from "react-query"
+
+  const { data, status } = useQuery<IBlogPost[], Error>(
+    QUERY_KEYS.BLOG_POSTS,
+    fetchBlogApi
+  );
+
+  here status would handle conditions to render posts or error/loading messages, example:
+  
+  if (status === 'error') {
+    return <div>{errorMessage}</div>;
+  }
+  */
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <main className="l-application">
@@ -27,36 +49,10 @@ function App() {
           <>
             {loading ? (
               <p>Loading...</p>
+            ) : data && data.length ? (
+              data.map((post) => <BlogCard post={post} key={post.id} />)
             ) : (
-              data?.map((post) => (
-                <article className="col-4 col-medium-3" key={post.id}>
-                  <div className="p-card--highlighted card">
-                    <div className="p-card__content ">
-                      <h4 className="p-text--x-small-capitalised header">
-                        Cloud and server
-                      </h4>
-                      <hr className="is-muted" />
-                      <img
-                        className="p-card__image"
-                        alt=""
-                        height="185"
-                        width="330"
-                        src={post.featured_media}
-                      />
-                      <h3 className="article-title">
-                        <a href={post.link} target="_blank">
-                          {post.title.rendered}
-                        </a>
-                      </h3>
-                      <h6>
-                        by <a href="#">{post.author}</a> on {post.date}
-                      </h6>
-                      <hr className="is-muted" />
-                      <p>Article</p>
-                    </div>
-                  </div>
-                </article>
-              ))
+              <p>No data available at the moment</p>
             )}
           </>
         </section>

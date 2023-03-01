@@ -1,1 +1,1 @@
-export * from './fetchBlogApi'
+export * from "./fetchBlogApi";

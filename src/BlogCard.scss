@@ -1,0 +1,18 @@
+// Import the framework
+@import "vanilla-framework";
+@include vanilla;
+
+$color-accent: rgb(99, 42, 74);
+
+.card {
+  border-top: $spv--x-small solid $color-accent;
+
+  .header {
+    padding-top: 0;
+    padding-bottom: $spv--medium;
+  }
+  .article-title {
+    font-weight: 400;
+    height: calc(2 * $spv--strip-regular);
+  }
+}
